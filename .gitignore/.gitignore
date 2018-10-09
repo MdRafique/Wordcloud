@@ -1,0 +1,103 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct  8 23:35:09 2018
+
+@author: Md Rafique
+"""
+
+# Start with loading all necessary libraries
+# you load all the necessary libraries:
+import numpy as np
+import pandas as pd
+from os import path
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
+import matplotlib.pyplot as plt
+
+ #Load in the dataframe
+df = pd.read_csv("winemag-data.csv")
+
+# Looking at first 5 rows of the dataset
+df.head()
+df[["country", "description","points"]].head()
+# Groupby by country
+country = df.groupby("country")
+
+# Start with one review:
+text = df.description[0]
+
+# Create and generate a word cloud image:
+wordcloud = WordCloud().generate(text)
+
+# Display the generated image:
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+# Create and generate a word cloud image:
+wordcloud = WordCloud().generate(text)
+
+# Display the generated image:
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+
+# lower max_font_size, change the maximum number of word and lighten the background:
+wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate(text)
+plt.figure()
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
+# Save the image in the img folder:
+#wordcloud.to_file("img/first_review.png")
+
+# Create stopword list:
+stopwords = set(STOPWORDS)
+stopwords.update(["drink", "now", "wine", "flavor", "flavors"])
+
+# Generate a word cloud image
+wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+
+# Display the generated image:
+# the matplotlib way:
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+
+from PIL import Image
+wine_mask = np.array(Image.open("C:/Users/Md Rafique/Desktop/Coding/Python/img/wine_mask.png"))
+wine_mask
+
+
+
+def transform_format(val):
+    if val == 0:
+        return 255
+    else:
+        return val
+# Transform your mask into a new one that will work with the function:
+transformed_wine_mask = np.ndarray((wine_mask.shape[0],wine_mask.shape[1]), np.int32)
+
+for i in range(len(wine_mask)):
+    transformed_wine_mask[i] = list(map(transform_format, wine_mask[i]))
+    
+    
+# Check the expected result of your mask
+transformed_wine_mask
+
+    # Create a word cloud image
+wc = WordCloud(background_color="white", max_words=1000, mask=transformed_wine_mask,
+               stopwords=stopwords, contour_width=3, contour_color='firebrick')
+
+# Generate a wordcloud
+wc.generate(text)
+
+# store to file
+#wc.to_file("")
+
+# show
+plt.figure(figsize=[20,10])
+plt.imshow(wc, interpolation='bilinear')
+plt.axis("off")
+plt.show()
